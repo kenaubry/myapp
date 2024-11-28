@@ -19,7 +19,7 @@ pipeline {
         stage('Déployer en Test') {
             steps {
                 script {
-                    bat 'docker run -d -p 3001:3000 -e MESSAGE="Environnement de Test" --name myapp-test myapp:${env.BUILD_ID}'
+                    bat 'docker run -d -p 3001:3000 -e MESSAGE="Environnement de Test" --name myapp-test myapp:%BUILD_ID%'
 
                 }
             }
