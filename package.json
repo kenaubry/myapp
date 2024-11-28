@@ -1,0 +1,13 @@
+{
+    "name": "myapp",
+    "version": "1.0.0",
+    "description": "Une application Node.js simple pour la démonstration CI/CD",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1"
+    }
+  }
+  
