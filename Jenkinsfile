@@ -19,7 +19,6 @@ pipeline {
         stage('Déployer en Test') {
             steps {
                 script {
-                    bat 'docker rm -f myapp-test || exit 0'
                     bat 'docker run -d -p 3001:3000 -e MESSAGE="Environnement de Test" --name myapp-test myapp:8'
 
                 }
@@ -40,8 +39,7 @@ pipeline {
                         message: "Voulez-vous déployer en production ?",
                         ok: "Déployer"
                     )
-                    bat 'docker rm -f myapp-prod || exit 0'
-                    bat "docker run -d -p 3000:3000 -e MESSAGE='Environnement de Production' --name myapp-prod ${dockerImage.id}"
+                    bat "docker run -d -p 3000:3000 -e MESSAGE='Environnement de Production' --name myapp-prod myapp:8"
                 }
             }
         }
