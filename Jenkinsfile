@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker rm -f myapp-test || true'
-                    dockerImage.run("-d -p 3001:3000 -e MESSAGE='Environnement de Test' --name myapp-test")
+                    dockerImage.run("-d -p 3001:3000 -e MESSAGE=\'Environnement de Test\' --name myapp-test")
                 }
             }
         }
@@ -33,16 +33,17 @@ pipeline {
         }
 
         stage('Déployer en Production') {
-            when {
-                input {
-                    message "Voulez-vous déployer en production ?"
-                    ok "Déployer"
-                }
-            }
             steps {
                 script {
+                    def userInput = input(
+                        message: "Voulez-vous déployer en production ?",
+                        ok: "Déployer",
+                        parameters: []
+                    )
+                    echo "Confirmation utilisateur : ${userInput}"
+
                     sh 'docker rm -f myapp-prod || true'
-                    dockerImage.run("-d -p 3000:3000 -e MESSAGE='Environnement de Production' --name myapp-prod")
+                    dockerImage.run("-d -p 3000:3000 -e MESSAGE=\'Environnement de Production\' --name myapp-prod")
                 }
             }
         }
