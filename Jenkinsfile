@@ -28,7 +28,7 @@ pipeline {
 
         stage('Tests') {
             steps {
-                bat 'timeout /t 5' // Equivalent de 'sleep' sur Windows
+                bat 'ping -n 6 127.0.0.1 > nul'
                 bat 'curl http://localhost:3001'
             }
         }
