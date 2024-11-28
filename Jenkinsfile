@@ -19,16 +19,16 @@ pipeline {
         stage('Déployer en Test') {
             steps {
                 script {
-                    sh 'docker rm -f myapp-test || true'
-                    dockerImage.run("-d -p 3001:3000 -e MESSAGE=\'Environnement de Test\' --name myapp-test")
+                    bat 'docker rm -f myapp-test || exit 0'
+                    bat "docker run -d -p 3001:3000 -e MESSAGE='Environnement de Test' --name myapp-test ${dockerImage.id}"
                 }
             }
         }
 
         stage('Tests') {
             steps {
-                sh 'sleep 5' // Attendre que le conteneur démarre
-                sh 'curl http://localhost:3001'
+                bat 'timeout /t 5' // Equivalent de 'sleep' sur Windows
+                bat 'curl http://localhost:3001'
             }
         }
 
@@ -37,13 +37,10 @@ pipeline {
                 script {
                     def userInput = input(
                         message: "Voulez-vous déployer en production ?",
-                        ok: "Déployer",
-                        parameters: []
+                        ok: "Déployer"
                     )
-                    echo "Confirmation utilisateur : ${userInput}"
-
-                    sh 'docker rm -f myapp-prod || true'
-                    dockerImage.run("-d -p 3000:3000 -e MESSAGE=\'Environnement de Production\' --name myapp-prod")
+                    bat 'docker rm -f myapp-prod || exit 0'
+                    bat "docker run -d -p 3000:3000 -e MESSAGE='Environnement de Production' --name myapp-prod ${dockerImage.id}"
                 }
             }
         }
@@ -52,7 +49,7 @@ pipeline {
     post {
         always {
             script {
-                sh 'docker rm -f myapp-test || true'
+                bat 'docker rm -f myapp-test || exit 0'
             }
         }
     }
