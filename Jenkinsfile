@@ -39,7 +39,7 @@ pipeline {
                         message: "Voulez-vous déployer en production ?",
                         ok: "Déployer"
                     )
-                    bat 'docker run -d -p 3000:3000 -e MESSAGE="Environnement de Production" --name myapp-prod myapp:8'
+                    bat 'docker run -d -p 3000:3000 -e MESSAGE="Environnement de Production" --name myapp-prod myapp:%BUILD_ID%'
                 }
             }
         }
