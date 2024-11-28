@@ -20,7 +20,8 @@ pipeline {
             steps {
                 script {
                     bat 'docker rm -f myapp-test || exit 0'
-                    bat "docker run -d -p 3001:3000 -e MESSAGE='Environnement de Test' --name myapp-test ${dockerImage.id}"
+                    bat 'docker run -d -p 3001:3000 -e MESSAGE="Environnement de Test" --name myapp-test myapp:8'
+
                 }
             }
         }
