@@ -12,10 +12,8 @@ pipeline {
             steps {
                 script {
                     def buildCmd = ["docker", "build", "-t", "myapp:${env.BUILD_ID}", "."]
-                    def process = buildCmd.execute()
-                    process.in.eachLine { println it }
-                    process.err.eachLine { println "ERREUR: $it" }
-                    process.waitFor()
+                    def result = ["docker", "build", "-t", "myapp:${env.BUILD_ID}", "."].execute().text
+                    echo result
                 }
             }
         }
@@ -75,3 +73,4 @@ pipeline {
         }
     }
 }
+
