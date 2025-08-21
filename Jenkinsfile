@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:24.0.7-cli'    // Image officielle Docker CLI
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Monter le socket Docker pour pouvoir lancer des containers
+        }
+    }
 
     stages {
         stage('Cloner le Code') {
@@ -11,21 +16,21 @@ pipeline {
         stage('Construire l\'Image Docker') {
             steps {
                 script {
-                    dockerImage = docker.build("myapp:${env.BUILD_ID}")
+                    sh "docker build -t myapp:${env.BUILD_ID} ."
                 }
             }
         }
 
         stage('Déployer en Test') {
             steps {
-                sh 'docker run -d -p 3001:3000 -e MESSAGE="Environnement de Test" --name myapp-test myapp:${BUILD_ID}'
+                sh "docker run -d -p 3001:3000 -e MESSAGE='Environnement de Test' --name myapp-test myapp:${env.BUILD_ID}"
             }
         }
 
         stage('Tests') {
             steps {
-                sh 'sleep 5'  // attendre 5s que le conteneur démarre
-                sh 'curl http://localhost:3001'
+                sh "sleep 5"
+                sh "curl http://localhost:3001"
             }
         }
 
@@ -36,7 +41,7 @@ pipeline {
                         message: "Voulez-vous déployer en production ?",
                         ok: "Déployer"
                     )
-                    sh 'docker run -d -p 3000:3000 -e MESSAGE="Environnement de Production" --name myapp-prod myapp:${BUILD_ID}'
+                    sh "docker run -d -p 3000:3000 -e MESSAGE='Environnement de Production' --name myapp-prod myapp:${env.BUILD_ID}"
                 }
             }
         }
@@ -44,7 +49,7 @@ pipeline {
 
     post {
         always {
-            sh 'docker rm -f myapp-test || true'
+            sh "docker rm -f myapp-test || true"
         }
     }
 }
